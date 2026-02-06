@@ -1,6 +1,6 @@
 {
   "name": "strapi-admin-portal",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The Portal Gun for Strapi Admin. Seamlessly mount React components into specific DOM selectors across any admin route.",
   "keywords": [
     "strapi",
@@ -21,6 +21,13 @@
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
