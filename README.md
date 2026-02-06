@@ -111,18 +111,18 @@ Removes a registered injection route.
 
 ## Visual Example
 
-Imagine you want to add a "Terms of Service" reminder below the "Save" button on the user profile page (`/me`).
+Imagine you want to add a "Terms of Service" reminder below the "Login" button on the Login page (`/admin/auth/login`).
 
-1. **Find the Selector**: Inspect the DOM on the `/me` page. Find the "Save" button. Let's say it's reachable via `form button[type="submit"]`.
+1. **Find the Selector**: Inspect the DOM on the `/admin/auth/login` page. Find the "Login" button. Let's say it's reachable via `form button[type="submit"]`.
 2. **Register**:
    ```ts
    registerRoute({
-     route: '/me',
+     route: '/admin/auth/login',
      selector: 'form button[type="submit"]',
      Component: () => import('./components/TermsReminder'),
    });
    ```
-3. **Result**: When you navigate to `/me`, the library watches for the selector. Once found, it creates a new React root next to it and renders your component.
+3. **Result**: When you navigate to `/admin/auth/logine`, the library watches for the selector. Once found, it creates a new React root next to it and renders your component.
 
 ## Caveats
 
