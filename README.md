@@ -98,10 +98,21 @@ Registers a component to be injected.
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `route` | `string` | The exact path in the admin panel to target (e.g., `/content-manager/collection-types/...`). |
+| `route` | `string` | The path pattern to target. Supports parameters (e.g., `/content-manager/:kind/:uid`). |
 | `selector` | `string` | A valid CSS selector. The library waits for this element to appear in the DOM and mounts your component **after** it. |
 | `Component` | `() => Promise<any>` | A function that returns a dynamic import of your component. |
 | `id` | `string` (optional) | A unique identifier. If not provided, one is generated. Useful if you need to programmatically unregister the route later. |
+
+#### Route Matching & Parameters
+
+The `route` property supports simplified pattern matching:
+
+- **Exact Match**: `/admin` matches `/admin` exactly.
+- **Parameters**: Segments starting with `:` are treated as parameters.
+  - Example: `/content-manager/:kind/:uid` matches `/content-manager/collectionType/api::article.article`.
+  - The captured values (e.g. `kind`, `uid`) are passed as props to your injected component.
+
+> **Note**: The path is split by `/` and must match the segment count exactly. Partial matches are not supported.
 
 ### `unregisterRoute(id)`
 

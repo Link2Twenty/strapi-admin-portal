@@ -148,3 +148,25 @@ export const unregisterInjectionRoute = (id: string, app: StrapiExtenedApp) => {
   // Clean up root immediately if it exists
   app.domInjections.removeRoot(id);
 };
+
+/**
+ * Simple route pattern matching to extract params (e.g. /content-type/:id)
+ * @param pattern the route pattern to match against (e.g. '/content-type/:id')
+ * @param path the actual path to test (e.g. '/content-type/123')
+ * @returns an object of extracted params if the pattern matches the path, or null if it doesn't match
+ */
+export const matchRoute = (pattern: string, path: string) => {
+  const patternParts = pattern.split("/").filter(Boolean);
+  const pathParts = path.split("/").filter(Boolean);
+  if (patternParts.length !== pathParts.length) return null;
+
+  const params: Record<string, string> = {};
+  for (let i = 0; i < patternParts.length; i++) {
+    if (patternParts[i].startsWith(":")) {
+      params[patternParts[i].replace(/^:/, "")] = pathParts[i];
+    } else if (patternParts[i] !== pathParts[i]) {
+      return null;
+    }
+  }
+  return params;
+};

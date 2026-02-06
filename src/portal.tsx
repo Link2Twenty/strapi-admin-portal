@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import Providers from "./providers";
 
 // Helpers
-import { getInjectionSite } from "./utils";
+import { getInjectionSite, matchRoute } from "./utils";
 
 // Types
 import type { InjectionRoute, StrapiExtenedApp } from "./types";
@@ -35,7 +35,8 @@ export const portal = async (
   }
 
   // 2. Early exit if not on the target route
-  if (state.location.pathname !== options.route) return;
+  const params = matchRoute(options.route, state.location.pathname);
+  if (!params) return;
 
   // Pre-fetch the component while waiting for the DOM
   const componentPromise = options.Component();
@@ -47,7 +48,7 @@ export const portal = async (
   if (!injectionSite) return;
 
   // 4. Double-check route after await (User might have navigated away during the wait)
-  if (window.location.pathname !== options.route) return;
+  if (!matchRoute(options.route, window.location.pathname)) return;
 
   // 5. Create the container if it does not exist
   if (!domInjections.getRoot(options.id)) {
@@ -72,7 +73,7 @@ export const portal = async (
 
   root.render(
     <Providers store={strapi.store!} configurations={strapi.configurations}>
-      <ComponentToRender />
+      <ComponentToRender {...params} />
     </Providers>
   );
 };
