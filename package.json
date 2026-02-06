@@ -1,0 +1,46 @@
+{
+  "name": "strapi-admin-portal",
+  "version": "0.0.1",
+  "description": "The Portal Gun for Strapi Admin. Seamlessly mount React components into specific DOM selectors across any admin route.",
+  "keywords": [
+    "strapi",
+    "cms",
+    "admin"
+  ],
+  "homepage": "https://github.com/Link2Twenty/strapi-admin-portal#readme",
+  "bugs": {
+    "url": "https://github.com/Link2Twenty/strapi-admin-portal/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Link2Twenty/strapi-admin-portal.git"
+  },
+  "license": "MIT",
+  "author": "Andrew Bone",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "lint": "eslint src"
+  },
+  "peerDependencies": {
+    "@strapi/design-system": "^2.1.2",
+    "@strapi/strapi": "^5.0.0",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
+    "react-intl": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "prettier": "^3.8.1",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}
