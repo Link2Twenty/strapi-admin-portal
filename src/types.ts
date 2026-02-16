@@ -17,7 +17,6 @@ export type ProvidersProps = {
   children: React.ReactNode;
   store: NonNullable<StrapiExtenedApp["store"]>;
   configurations: StrapiExtenedApp["configurations"];
-  target?: HTMLElement;
 };
 
 export type InjectionRoute = InjectRouteOptions & { id: string };

@@ -1,5 +1,6 @@
 import {
   InitialInjection,
+  refreshTheme,
   registerInjectionRoute,
   unregisterInjectionRoute
 } from "./utils";
@@ -40,7 +41,10 @@ export const initialiseInjections = (app: StrapiExtenedApp) => {
       const root = app.domInjections.roots[id];
       if (root) {
         // IMPORTANT: Unmount the root to clear memory, timers, and subscriptions
-        setTimeout(() => root.unmount(), 0);
+        setTimeout(() => {
+          root.unmount();
+          if (app.store) refreshTheme(app.store);
+        }, 0);
         delete app.domInjections.roots[id];
       }
     }

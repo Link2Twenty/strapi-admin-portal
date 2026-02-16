@@ -3,7 +3,6 @@ import { useSyncExternalStore, useState, useEffect, useMemo } from "react";
 // Components
 import { IntlProvider } from "react-intl";
 import { DesignSystemProvider } from "@strapi/design-system";
-import { StyleSheetManager } from "styled-components";
 
 // Helpers
 import defaultsDeep from "lodash/defaultsDeep";
@@ -14,12 +13,7 @@ import type { ProvidersProps } from "./types";
 /**
  * Providers component to wrap the injected components with necessary context providers (e.g. DesignSystemProvider, IntlProvider)
  */
-const Providers = ({
-  children,
-  store,
-  configurations,
-  target
-}: ProvidersProps) => {
+const Providers = ({ children, store, configurations }: ProvidersProps) => {
   const state = useSyncExternalStore(store.subscribe, store.getState);
 
   const themeName = state.admin_app.theme.currentTheme || "light";
@@ -33,6 +27,17 @@ const Providers = ({
     matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
   );
 
+  const appMessages = useMemo(
+    () => defaultsDeep(translations[locale], translations.en),
+    [locale, translations]
+  );
+
+  const themeObject = useMemo(() => {
+    return configurations.themes[
+      themeName === "system" ? systemTheme : themeName
+    ];
+  }, [themeName, systemTheme, configurations.themes]);
+
   // Listen to system theme changes
   useEffect(() => {
     const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
@@ -45,25 +50,12 @@ const Providers = ({
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  const appMessages = useMemo(
-    () => defaultsDeep(translations[locale], translations.en),
-    [locale, translations]
-  );
-
-  const themeObject = useMemo(() => {
-    return configurations.themes[
-      themeName === "system" ? systemTheme : themeName
-    ];
-  }, [themeName, systemTheme, configurations.themes]);
-
   return (
-    <StyleSheetManager target={target}>
-      <DesignSystemProvider theme={themeObject} locale={locale}>
-        <IntlProvider locale={locale} messages={appMessages}>
-          {children}
-        </IntlProvider>
-      </DesignSystemProvider>
-    </StyleSheetManager>
+    <DesignSystemProvider theme={themeObject} locale={locale}>
+      <IntlProvider locale={locale} messages={appMessages}>
+        {children}
+      </IntlProvider>
+    </DesignSystemProvider>
   );
 };
 

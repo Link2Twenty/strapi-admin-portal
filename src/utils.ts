@@ -170,3 +170,24 @@ export const matchRoute = (pattern: string, path: string) => {
   }
   return params;
 };
+
+/**
+ * Force refresh the theme by toggling it to light, then dark, then back to the current theme.
+ * This is a workaround to force the DesignSystemProvider to re-apply the theme,
+ *  which is necessary when dynamically injecting components after the initial render.
+ * @param store the Strapi app store, used to dispatch theme changes
+ */
+export const refreshTheme = (store: StrapiExtenedApp["store"]) => {
+  const state = store?.getState();
+  const currentTheme = state?.admin_app?.theme?.currentTheme;
+
+  requestAnimationFrame(() => {
+    store?.dispatch({ type: "admin/setAppTheme", payload: "light" });
+  });
+  requestAnimationFrame(() => {
+    store?.dispatch({ type: "admin/setAppTheme", payload: "dark" });
+  });
+  requestAnimationFrame(() => {
+    store?.dispatch({ type: "admin/setAppTheme", payload: currentTheme });
+  });
+};
