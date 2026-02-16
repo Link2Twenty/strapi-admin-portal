@@ -29,7 +29,7 @@ yarn add strapi-admin-portal
 
 ### 1. Initialize the Plugin
 
-In your Strapi Admin's entry point (usually `src/admin/app.tsx` or `src/admin/app.js`), initialize the injection system during the `register` or `bootstrap` phase.
+In your Strapi Admin's entry point (usually `src/admin/app.tsx` or `src/admin/app.js`), initialize the injection system during the `register` phase.
 
 ```tsx
 import type { StrapiApp } from '@strapi/strapi/admin';
@@ -39,7 +39,7 @@ export default {
   config: {
     locales: [],
   },
-  bootstrap(app: StrapiApp) {
+  register(app: StrapiApp) {
     // Initialize the portal system and get the helper methods
     const { registerRoute } = initialiseInjections(app);
 
@@ -87,7 +87,7 @@ export default MyCustomButton;
 
 Initializes the portal system on the Strapi app instance.
 
-- **app**: The `StrapiApp` instance provided by `bootstrap` or `register`.
+- **app**: The `StrapiApp` instance provided by `register`.
 - **Returns**: An object containing `registerRoute`, `unregisterRoute`, and internal state accessors.
 
 ### `registerRoute(options)`
