@@ -72,7 +72,11 @@ export const portal = async (
   if (!root) return;
 
   root.render(
-    <Providers store={strapi.store!} configurations={strapi.configurations}>
+    <Providers
+      store={strapi.store!}
+      configurations={strapi.configurations}
+      target={document.getElementById(options.id) || undefined}
+    >
       <ComponentToRender {...params} />
     </Providers>
   );

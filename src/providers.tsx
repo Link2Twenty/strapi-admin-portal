@@ -3,6 +3,7 @@ import { useSyncExternalStore, useState, useEffect, useMemo } from "react";
 // Components
 import { IntlProvider } from "react-intl";
 import { DesignSystemProvider } from "@strapi/design-system";
+import { StyleSheetManager } from "styled-components";
 
 // Helpers
 import defaultsDeep from "lodash/defaultsDeep";
@@ -13,7 +14,12 @@ import type { ProvidersProps } from "./types";
 /**
  * Providers component to wrap the injected components with necessary context providers (e.g. DesignSystemProvider, IntlProvider)
  */
-const Providers = ({ children, store, configurations }: ProvidersProps) => {
+const Providers = ({
+  children,
+  store,
+  configurations,
+  target
+}: ProvidersProps) => {
   const state = useSyncExternalStore(store.subscribe, store.getState);
 
   const themeName = state.admin_app.theme.currentTheme || "light";
@@ -51,11 +57,13 @@ const Providers = ({ children, store, configurations }: ProvidersProps) => {
   }, [themeName, systemTheme, configurations.themes]);
 
   return (
-    <DesignSystemProvider theme={themeObject} locale={locale}>
-      <IntlProvider locale={locale} messages={appMessages}>
-        {children}
-      </IntlProvider>
-    </DesignSystemProvider>
+    <StyleSheetManager target={target}>
+      <DesignSystemProvider theme={themeObject} locale={locale}>
+        <IntlProvider locale={locale} messages={appMessages}>
+          {children}
+        </IntlProvider>
+      </DesignSystemProvider>
+    </StyleSheetManager>
   );
 };
 
