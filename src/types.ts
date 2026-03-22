@@ -1,6 +1,6 @@
 import type { Root } from "react-dom/client";
 import type { Router } from "@remix-run/router";
-import type { StrapiApp } from "@strapi/strapi/admin";
+import type { Permission, StrapiApp } from "@strapi/strapi/admin";
 
 export interface InjectPublicRouter extends Omit<
   StrapiApp["router"],
@@ -26,6 +26,7 @@ export type InjectRouteOptions = {
   route: string;
   selector: string;
   Component: () => Promise<{ default: React.ComponentType<unknown> }>;
+  permissions?: Permission[];
 };
 
 export interface domInjectionsProps {

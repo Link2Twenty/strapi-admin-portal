@@ -6,6 +6,7 @@ import type {
   InjectRouteOptions,
   StrapiExtenedApp
 } from "./types";
+import type { Permission } from "@strapi/strapi/admin";
 import type { RouterState } from "@remix-run/router";
 
 /**
@@ -190,4 +191,72 @@ export const refreshTheme = (store: StrapiExtenedApp["store"]) => {
   requestAnimationFrame(() => {
     store?.dispatch({ type: "admin/setAppTheme", payload: currentTheme });
   });
+};
+
+/**
+ * Retrieves the value of a specified cookie.
+ *
+ * @param name - The name of the cookie to retrieve.
+ * @returns The decoded cookie value if found, otherwise null.
+ */
+export const getCookieValue = (name: string): string | null => {
+  const cookieArray = document.cookie.split(";");
+
+  return cookieArray.reduce<string | null>((result, cookie) => {
+    const [key, value] = cookie.split("=").map((item) => item.trim());
+
+    return key === name ? decodeURIComponent(value) : result;
+  }, null);
+};
+
+/**
+ * Retrieves the JWT token from localStorage or cookies.
+ * @returns The JWT token if found, otherwise null.
+ */
+export const getToken = (): string | null => {
+  const fromLocalStorage = localStorage.getItem("jwtToken");
+  if (fromLocalStorage) return JSON.parse(fromLocalStorage);
+
+  const fromCookie = getCookieValue("jwtToken");
+  return fromCookie ?? null;
+};
+
+/**
+ * Validate if the user has the required permissions to view the injected component
+ * @param requiredPermissions the permissions required to view the component
+ * @returns true if the user has the required permissions, false otherwise
+ */
+export const validatePermissions = async (
+  requiredPermissions: Permission[]
+) => {
+  if (requiredPermissions.length === 0) return true;
+
+  try {
+    const token = getToken();
+
+    if (!token) throw new Error("No auth token found");
+
+    const userPerms = await fetch("/admin/users/me/permissions", {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then((res) => {
+      return res.json() as Promise<{ data: Permission[]; error?: any }>;
+    });
+
+    if (!userPerms.data || userPerms.error) {
+      throw new Error("Failed to fetch user permissions for permission check");
+    }
+
+    const permArray = userPerms.data;
+    const permMap = new Map(permArray.map((up) => [up.action, up.subject]));
+
+    return requiredPermissions.every(({ action, subject }) => {
+      const hasAction = permMap.has(action);
+      const matchesSubject = !subject || permMap.get(action) === subject;
+
+      return hasAction && matchesSubject;
+    });
+  } catch (error) {
+    console.error("Error validating permissions:", error);
+    return false;
+  }
 };

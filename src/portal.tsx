@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import Providers from "./providers";
 
 // Helpers
-import { getInjectionSite, matchRoute } from "./utils";
+import { getInjectionSite, matchRoute, validatePermissions } from "./utils";
 
 // Types
 import type { InjectionRoute, StrapiExtenedApp } from "./types";
@@ -70,6 +70,11 @@ export const portal = async (
   const root = domInjections.getRoot(options.id);
 
   if (!root) return;
+
+  const hasPermission = await validatePermissions(options.permissions || []);
+
+  // If user doesn't have permissions, do not render the component
+  if (!hasPermission) return;
 
   root.render(
     <Providers store={strapi.store!} configurations={strapi.configurations}>
